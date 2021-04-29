@@ -1,0 +1,30 @@
+{
+  "name": "@webpart/server-api",
+  "version": "1.0.4",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "micty",
+  "email": "mictydeng@qq.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/web-part/server-api.git"
+  },
+  "dependencies": {
+    "@definejs/directory": "^1.0.1",
+    "@definejs/file": "^1.0.0",
+    "@definejs/lines": "^1.0.0",
+    "@definejs/md5": "^1.0.0",
+    "@definejs/object": "^1.1.0",
+    "@definejs/patterns": "^1.0.0",
+    "@webpart/stat": "^1.0.3",
+    "body-parser": "^1.19.0",
+    "colors": "^1.4.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.5",
+    "sse-express": "^2.0.2",
+    "tree-kill": "^1.2.2"
+  }
+}
