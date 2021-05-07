@@ -25,7 +25,6 @@ module.exports = {
     * @param {object} opt 
     *   opt = {
     *       url: 'http://localhost:3001',
-    *       path: 'api',
     *       allowCrossOrigin: true,
     *       stat: {},
     *   };
@@ -33,7 +32,6 @@ module.exports = {
     start(app, opt) {
         let { bodyParser, } = config;
         let { stat, } = opt;
-
 
         app.use(CookieParser());
         app.use(BodyParser.json(bodyParser.json));
@@ -80,34 +78,34 @@ module.exports = {
 
         Router.use(app, {
             module: 'FileList',
-            base: `/${opt.path}/FileList.`,
+            base: `/api/FileList.`,
             get: ['get', 'read',],
         });
 
         Router.use(app, {
             module: 'Stat',
-            base: `/${opt.path}/Stat.`,
+            base: `/api/Stat.`,
             get: ['get',],
         });
 
         Router.use(app, {
             module: 'MD5',
-            base: `/${opt.path}/MD5.`,
+            base: `/api/MD5.`,
             get: ['get',],
         });
 
         Router.use(app, {
             module: 'Log',
-            base: `/${opt.path}/Log.`,
+            base: `/api/Log.`,
             get: ['get', 'clear',],
         });
 
-        app.get(`/${opt.path}/sse/Terminal.exec`, SSEExpress(), function (req, res, next) {
+        app.get(`/api/sse/Terminal.exec`, SSEExpress(), function (req, res, next) {
             Terminal.exec(req, res);
         });
 
-        //返回接口的基 url。
-        return `${opt.url}/${opt.path}/`;
+        return `${opt.url}/api/`;
+
 
     },
 };
