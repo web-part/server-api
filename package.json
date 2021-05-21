@@ -1,6 +1,6 @@
 {
   "name": "@webpart/server-api",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "",
   "main": "index.js",
   "scripts": {},
@@ -19,6 +19,7 @@
     "@definejs/md5": "^1.0.0",
     "@definejs/object": "^1.1.0",
     "@definejs/patterns": "^1.0.0",
+    "@webpart/console": "^2.0.2",
     "@webpart/stat": "^1.0.3",
     "body-parser": "^1.19.0",
     "colors": "^1.4.0",

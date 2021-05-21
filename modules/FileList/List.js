@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const Directory = require('@definejs/directory');
-const MD5 = require('@definejs/md5');
 const Path = require('../../lib/Path');
 
 

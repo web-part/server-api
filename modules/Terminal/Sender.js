@@ -1,5 +1,5 @@
 
-const File = require('@definejs/file');
+const console = require('@webpart/console');
 const List = require('./Sender/List');
 
 let mapper = new Map();
@@ -30,20 +30,15 @@ class Sender {
         // process.stdout.write(msg);
 
         //避免换行。 因为换行在 sse 的格式里有特殊含义。
-        let json = JSON.stringify({
-            'time': Date.now(),
-            'msg': msg,
-        });
+        let time = Date.now();
+        let json = JSON.stringify({ time, msg, });
 
         res.sse({
             'event': event,
             'data': json,
         });
 
-        let file = './output/terminal.log';
-        let log = json + '\n';
-
-        File.append(file, log, null);
+        console.write(event, msg, time);
     }
 
 

@@ -1,4 +1,5 @@
 
+const console = require('@webpart/console');
 const kill = require('tree-kill');
 
 module.exports = {

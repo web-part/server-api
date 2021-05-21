@@ -1,13 +1,8 @@
 ﻿
 
+const console = require('@webpart/console');
 
-const File = require('@definejs/file');
-const Lines = require('@definejs/lines');
 
-let file = './output/terminal.log';
-// const path = require('path');
-// file = path.resolve(file);
-// console.log(file);
 
 
 module.exports = {
@@ -18,20 +13,7 @@ module.exports = {
     */
     get: function (req, res) {
         try {
-            let content = File.read(file);
-            let lines = Lines.split(content);
-
-            let list = lines.map((line) => {
-                if (!line) {
-                    return null;
-                }
-                try {
-                    return JSON.parse(line);
-                }
-                catch {
-                    return null;
-                }
-            });
+            let list = console.read();
 
             res.success(list);
         }
@@ -45,7 +27,7 @@ module.exports = {
     */
     clear: function (req, res) {
         try {
-            File.write(file, '');
+            console.write('');
             res.success([]);
         }
         catch (ex) {
