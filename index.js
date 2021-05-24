@@ -81,6 +81,7 @@ module.exports = {
             module: 'FileList',
             base: `/api/FileList.`,
             get: ['get', 'read',],
+            post: ['delete',],
         });
 
         Router.use(app, {

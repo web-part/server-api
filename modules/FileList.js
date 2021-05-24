@@ -1,6 +1,7 @@
 ﻿
 const fs = require('fs');
 const File = require('@definejs/file');
+const Directory = require('@definejs/directory');
 const MD5 = require('@definejs/md5');
 const Path = require('../lib/Path');
 const List = require('./FileList/List');
@@ -117,6 +118,50 @@ module.exports = {
             else {
                 res.none({ 'id': id, });
             }
+        }
+        catch (ex) {
+            res.error(ex);
+        }
+    },
+
+
+    /**
+    * 删除一个文件或目录。
+    *   body.data = {
+    *       id: '',                 //要删除的文件或目录名称。
+    *       type: 'file' | 'dir',   //类型，文件或目录。
+    *   };
+    */
+    delete: function (req, res) {
+        let data = req.body.data;
+        let { id, type, } = data;
+
+        if (!id) {
+            res.empty('id');
+            return;
+        }
+
+        try {
+            let src = meta.root + id;
+
+            if (!File.exists(src)) {
+                res.send({
+                    code: '404',
+                    msg: '不存在: ' + id,
+                });
+                return;
+            }
+
+            if (type == 'file') {
+                File.delete(src);
+            }
+            else {
+                Directory.delete(src);
+            }
+
+            res.success({
+                'id': id,
+            });
         }
         catch (ex) {
             res.error(ex);
