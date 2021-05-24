@@ -8,6 +8,7 @@ const FileList = require('./modules/FileList');
 const Stat = require('./modules/Stat');
 const MD5 = require('./modules/MD5');
 const Terminal = require('./modules/Terminal');
+const Log = require('./modules/Log');
 
 const config = require('./config'); //全局的配置文件。
 
@@ -102,6 +103,10 @@ module.exports = {
 
         app.get(`/api/sse/Terminal.exec`, SSEExpress(), function (req, res, next) {
             Terminal.exec(req, res);
+        });
+
+        app.get(`/api/sse/Log.watch`, SSEExpress(), function (req, res, next) {
+            Log.watch(req, res);
         });
 
         return `${opt.url}/api/`;
