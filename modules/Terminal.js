@@ -1,9 +1,7 @@
 ﻿
-
-require('colors/safe');
-
 const console = require('@webpart/console');
 const { spawn, } = require('child_process');
+
 const Sender = require('./Terminal/Sender');
 const Killer = require('./Terminal/Killer');
 

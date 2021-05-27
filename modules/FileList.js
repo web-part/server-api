@@ -96,7 +96,6 @@ module.exports = {
         let id = req.query.id || '';
 
         try {
-
             let data = read(id);
 
             let name = data.name;

@@ -4,5 +4,5 @@
 
 ## 安装
 ``` bash
-npm install --save-dev @webpart/server-api
+npm install @webpart/server-api
 ```

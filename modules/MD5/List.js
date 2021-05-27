@@ -1,6 +1,5 @@
 
 const MD5 = require('@definejs/md5');
-const Patterns = require('@definejs/patterns');
 const Directory = require('@definejs/directory');
 
 module.exports = {

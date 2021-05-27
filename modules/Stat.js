@@ -1,6 +1,5 @@
 ﻿
 const fs = require('fs');
-const $Object = require('@definejs/object');
 const { Module, HTML, Analyser, } = require('@webpart/stat');
 
 function parse(config) {
@@ -12,12 +11,14 @@ function parse(config) {
     let htmlInfos = HTML.stat(htdocs, config.html);
     let htmlStat = Analyser.stat(htmlInfos);
 
-    $Object.each(moduleStat.id$info, (id, info) => { 
+
+    Object.keys(moduleStat.id$info).forEach((id) => {
+        let info = moduleStat.id$info[id];
         let { file, } = info;
         let stat = fs.statSync(file);
 
         info.stat = stat;
-    });
+     });
 
     return {
         moduleStat,
