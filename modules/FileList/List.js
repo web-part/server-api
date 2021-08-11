@@ -1,6 +1,5 @@
 ﻿
 
-const fs = require('fs');
 const Directory = require('@definejs/directory');
 const Path = require('../../lib/Path');
 
@@ -62,45 +61,7 @@ module.exports = {
         };
     },
 
-    /**
-    * 
-    */
-    stat: function (src, root) {
-        let list = [];
-
-        Directory.each(src, function (dir, files, dirs) {
-
-            files = files.map(function (file) {
-                let name = Path.relative(root, file);
-                let ext = Path.ext(file);
-                // let md5 = MD5.read(file);
-
-                return {
-                    'type': 'file',
-                    'name': '/' + name,
-                    'ext': ext,
-                    // 'md5': md5,
-                    'stat': fs.statSync(file),
-                };
-            });
-
-
-            dirs = dirs.map(function (sdir) {
-                let name = Path.relative(root, sdir);
-
-                return {
-                    'type': 'dir',
-                    'name': '/' + name,
-                    'stat': fs.statSync(sdir),
-                };
-            });
-
-            list.push(...dirs, ...files);
-        });
-
-
-        return list;
-    },
+    
 };
 
 

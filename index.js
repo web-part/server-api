@@ -1,21 +1,23 @@
-const BodyParser = require('body-parser');
+
 const SSEExpress = require('sse-express');
 
 const Router = require('./lib/Router');
+const BodyParser = require('./modules/BodyParser');
 const Path = require('./modules/Path');
 const FileList = require('./modules/FileList');
 const Stat = require('./modules/Stat');
 const MD5 = require('./modules/MD5');
 const Terminal = require('./modules/Terminal');
 const Log = require('./modules/Log');
-
-const config = require('./config'); //全局的配置文件。
+const Server = require('./modules/Server');
+const HtmlTree = require('./modules/HtmlTree');
+const Less = require('./modules/Less');
 
 
 
 module.exports = {
 
-  
+
     /**
     * 启动 API 接口服务。
     * @param {app} app 
@@ -26,18 +28,16 @@ module.exports = {
     *       api: '/api',
     *       sse: '/api/sse',
     *       allowCrossOrigin: true,
+    *       statics: [],
+    *       qrcode: {},
+    *       session: {},
     *       stat: {},
+    *       master: {},
     *   };
     */
     start(app, opt) {
-        let { bodyParser, } = config;
         let { stat, } = opt;
-        let { url, api, sse, } = Path.get(opt);
-
-       
-        app.use(BodyParser.json(bodyParser.json));
-        app.use(BodyParser.urlencoded(bodyParser.urlencoded));
-
+        let info = Path.get(opt);
 
         if (opt.allowCrossOrigin) {
             app.use(function (req, res, next) {
@@ -46,54 +46,64 @@ module.exports = {
             });
         }
 
+        BodyParser.use(app);
 
-        FileList.config({
+
+        Stat.data = stat;
+
+        HtmlTree.data = {
+            'master': opt.master,
+        };
+
+        Server.data = {
+            'host': opt.host,
+            'port': opt.port,
+            'statics': opt.statics,
+            'qrcode': opt.qrcode,
+            'session': opt.session,
+            'api': info,
+        };
+
+        FileList.data = {
             'root': stat.htdocs,
-            'url': url,
-        });
+            'url': info.url,
+        };
 
-        MD5.config({
+        MD5.data = {
             'root': stat.htdocs,
-        });
+        };
+
+        Less.data = {};
 
 
-        Stat.config(stat);
+        bindRouter('Server', ['get']);
+        bindRouter('FileList', ['get', 'read'], ['delete', 'write']);
+        bindRouter('Stat', ['get']);
+        bindRouter('MD5', ['get']);
+        bindRouter('Log', ['get', 'clear']);
+        bindRouter('HtmlTree', ['parse']);
+        bindRouter('Less', [], ['compile']);
+        bindRouter('Crypto', [], ['md5',]);
 
-
-        Router.use(app, {
-            module: 'FileList',
-            base: `${api}/FileList.`,
-            get: ['get', 'read',],
-            post: ['delete',],
-        });
-
-        Router.use(app, {
-            module: 'Stat',
-            base: `${api}/Stat.`,
-            get: ['get',],
-        });
-
-        Router.use(app, {
-            module: 'MD5',
-            base: `${api}/MD5.`,
-            get: ['get',],
-        });
-
-        Router.use(app, {
-            module: 'Log',
-            base: `${api}/Log.`,
-            get: ['get', 'clear',],
-        });
-
-        app.get(`${sse}/Terminal.exec`, SSEExpress(), function (req, res, next) {
+        app.get(`${info.sse}/Terminal.exec`, SSEExpress(), function (req, res, next) {
             Terminal.exec(req, res);
         });
 
-        app.get(`${sse}/Log.watch`, SSEExpress(), function (req, res, next) {
+        app.get(`${info.sse}/Log.watch`, SSEExpress(), function (req, res, next) {
             Log.watch(req, res);
         });
 
-        return { url, api, sse, };
+
+        function bindRouter(module, gets, posts) {
+            Router.use(app, {
+                'module': module,
+                'base': `${info.api}/${module}.`,
+                'get': gets,
+                'post': posts,
+            });
+        }
+
+        return info;
 
 
     },

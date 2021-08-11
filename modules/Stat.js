@@ -1,5 +1,4 @@
 ﻿
-const fs = require('fs');
 const { Module, HTML, Analyser, } = require('@webpart/stat');
 
 function parse(config) {
@@ -12,14 +11,6 @@ function parse(config) {
     let htmlStat = Analyser.stat(htmlInfos);
 
 
-    Object.keys(moduleStat.id$info).forEach((id) => {
-        let info = moduleStat.id$info[id];
-        let { file, } = info;
-        let stat = fs.statSync(file);
-
-        info.stat = stat;
-     });
-
     return {
         moduleStat,
         htmlStat,
@@ -28,15 +19,10 @@ function parse(config) {
 }
 
 
-const meta = {
-    config: null,
-};
 
-module.exports = {
 
-    config(config) { 
-        meta.config = config;
-    },
+module.exports = exports = {
+    data: null,
 
     /**
     * 获取全部文件和目录列表。
@@ -44,7 +30,7 @@ module.exports = {
     get: function (req, res) {
         try {
 
-            let stat = parse(meta.config);
+            let stat = parse(exports.data);
 
             res.success(stat);
         }
