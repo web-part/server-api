@@ -38,12 +38,6 @@ module.exports = {
     *   };
     */
     start(app, opt) {
-
-
-        /////////
-        console.log(opt.watch)
-
-
         let { stat, allowCrossOrigin, } = opt;
         let info = Path.get(opt);
 
