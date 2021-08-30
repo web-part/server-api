@@ -22,7 +22,7 @@ module.exports = exports = {
     get: function (req, res) {
         try {
             let { opt, } = exports.data;
-            let { file, } = opt.watch;
+            let { file, } = opt.watch || {};
             let cwd = process.cwd();
             let pkg = File.readJSON(`${cwd}/package.json`);
 
