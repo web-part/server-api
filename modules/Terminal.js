@@ -17,8 +17,6 @@ module.exports = {
         let pid = child.pid;
         let sender = new Sender(res);
 
-        console.log(cmd, args);
-
         console.log(`Terminal.exec start: pid=${pid}; cmd=${cmd}; args=${req.query.args}`);
 
         req.on('close', function () {

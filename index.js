@@ -10,8 +10,10 @@ const MD5 = require('./modules/MD5');
 const Terminal = require('./modules/Terminal');
 const Log = require('./modules/Log');
 const Server = require('./modules/Server');
+const Project = require('./modules/Project');
 const HtmlTree = require('./modules/HtmlTree');
 const Less = require('./modules/Less');
+const JS = require('./modules/JS');
 
 
 
@@ -36,10 +38,16 @@ module.exports = {
     *   };
     */
     start(app, opt) {
-        let { stat, } = opt;
+
+
+        /////////
+        console.log(opt.watch)
+
+
+        let { stat, allowCrossOrigin, } = opt;
         let info = Path.get(opt);
 
-        if (opt.allowCrossOrigin) {
+        if (allowCrossOrigin) {
             app.use(function (req, res, next) {
                 res.set({ 'Access-Control-Allow-Origin': '*', });
                 next();
@@ -55,14 +63,8 @@ module.exports = {
             'master': opt.master,
         };
 
-        Server.data = {
-            'host': opt.host,
-            'port': opt.port,
-            'statics': opt.statics,
-            'qrcode': opt.qrcode,
-            'session': opt.session,
-            'api': info,
-        };
+        Server.data = { opt, info, };
+        Project.data = { opt, };
 
         FileList.data = {
             'root': stat.htdocs,
@@ -74,15 +76,18 @@ module.exports = {
         };
 
         Less.data = {};
+        JS.data = {};
 
 
         bindRouter('Server', ['get']);
+        bindRouter('Project', ['get']);
         bindRouter('FileList', ['get', 'read'], ['delete', 'write']);
         bindRouter('Stat', ['get']);
         bindRouter('MD5', ['get']);
         bindRouter('Log', ['get', 'clear']);
         bindRouter('HtmlTree', ['parse']);
         bindRouter('Less', [], ['compile']);
+        bindRouter('JS', [], ['minify']);
         bindRouter('Crypto', [], ['md5',]);
 
         app.get(`${info.sse}/Terminal.exec`, SSEExpress(), function (req, res, next) {
