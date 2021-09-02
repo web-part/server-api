@@ -19,9 +19,9 @@ class Sender {
         
     }
 
-    send(event, data) {
+    send(event, data, isEnd) {
         let { res, list, } = mapper.get(this);
-        let msg = list.push(data);
+        let msg = list.push(data, isEnd);
 
         if (msg === false) {
             return;

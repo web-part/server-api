@@ -13,14 +13,21 @@ module.exports = {
     exec(req, res) {
         let cmd = req.query.cmd;
         let args = JSON.parse(req.query.args);
-        let child = spawn(cmd, args);
+
+        let isWin32 = process.platform == 'win32';
+        let child = isWin32 ? spawn('cmd.exe', ['/c', cmd, ...args,]) : spawn(cmd, args);
         let pid = child.pid;
         let sender = new Sender(res);
 
         console.log(`Terminal.exec start: pid=${pid}; cmd=${cmd}; args=${req.query.args}`);
 
         req.on('close', function () {
-            Killer.kill(pid);
+            if (isWin32) {
+                child.kill();
+            }
+            else {
+                Killer.kill(pid);
+            }
         });
         
         
@@ -32,6 +39,7 @@ module.exports = {
         child.on('error', function (error) {
             let msg = JSON.stringify(error) + '\n'; //这里要加个换行符以表示当前消息结束了，不用再等待了。
             sender.send('error', msg);
+            // sender.send('error', error, true);
         });
 
         //执行一个存在的命令，但命令内部发生了错误时会触发。
