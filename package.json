@@ -1,6 +1,6 @@
 {
   "name": "@webpart/server-api",
-  "version": "3.5.4",
+  "version": "3.6.0",
   "description": "用于开发阶段的本地 web 服务器中提供 api 接口。",
   "main": "index.js",
   "scripts": {},

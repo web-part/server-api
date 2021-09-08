@@ -30,6 +30,7 @@ module.exports = {
     *       api: '/api',
     *       sse: '/api/sse',
     *       allowCrossOrigin: true,
+    *       allowHosts: ['localhost', '127.0.0.1',],
     *       statics: [],
     *       qrcode: {},
     *       session: {},
@@ -38,7 +39,7 @@ module.exports = {
     *   };
     */
     start(app, opt) {
-        let { stat, allowCrossOrigin, } = opt;
+        let { port, stat, allowCrossOrigin, allowHosts = [], } = opt;
         let info = Path.get(opt);
 
         if (allowCrossOrigin) {
@@ -47,6 +48,23 @@ module.exports = {
                 next();
             });
         }
+
+        if (allowHosts.length > 0) {
+            app.use(function (req, res, next) {
+                let { host, } = req.headers;
+                let isOK = allowHosts.some((item) => {
+                    return `${item}:${port}` == host;
+                });
+
+                if (isOK) {
+                    next();
+                }
+                else {
+                    res.status(403).send('禁止访问');
+                }
+            });
+        }
+
 
         BodyParser.use(app);
 

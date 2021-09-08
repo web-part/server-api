@@ -14,7 +14,7 @@ module.exports = {
                 console.log(error);
             }
             else {
-                console.log(`Terminal.exec kill: pid=${pid}`);
+                // console.log(`Terminal.exec kill: pid=${pid}`);
             }
         });
     },

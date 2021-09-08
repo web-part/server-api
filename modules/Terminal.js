@@ -19,7 +19,7 @@ module.exports = {
         let pid = child.pid;
         let sender = new Sender(res);
 
-        console.log(`Terminal.exec start: pid=${pid}; cmd=${cmd}; args=${req.query.args}`);
+        // console.log(`Terminal.exec start: pid=${pid}; cmd=${cmd}; args=${req.query.args}`);
 
         req.on('close', function () {
             if (isWin32) {
@@ -32,7 +32,7 @@ module.exports = {
         
         
         child.on('close', function (code) {
-            console.log(`Terminal.exec close: pid=${pid}; code=${code}`);
+            // console.log(`Terminal.exec close: pid=${pid}; code=${code}`);
         });
 
         //执行了一个完全不存在的命令时会触发。
