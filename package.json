@@ -1,6 +1,6 @@
 {
   "name": "@webpart/server-api",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "用于开发阶段的本地 web 服务器中提供 api 接口。",
   "main": "index.js",
   "scripts": {},
@@ -16,7 +16,6 @@
     "@definejs/directory": "^1.0.1",
     "@definejs/file": "^1.0.0",
     "@definejs/md5": "^1.0.0",
-    "@definejs/patterns": "^1.0.0",
     "@webpart/console": "^2.1.0",
     "@webpart/master": "^2.1.0",
     "@webpart/stat": "^1.0.7",
