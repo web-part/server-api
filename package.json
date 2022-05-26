@@ -1,6 +1,6 @@
 {
   "name": "@webpart/server-api",
-  "version": "3.6.1",
+  "version": "3.6.2",
   "description": "用于开发阶段的本地 web 服务器中提供 api 接口。",
   "main": "index.js",
   "scripts": {},
@@ -13,12 +13,12 @@
     "url": "https://github.com/web-part/server-api.git"
   },
   "dependencies": {
-    "@definejs/directory": "^1.0.1",
-    "@definejs/file": "^1.0.0",
-    "@definejs/md5": "^1.0.0",
-    "@webpart/console": "^2.1.0",
-    "@webpart/master": "^2.1.0",
-    "@webpart/stat": "^1.0.7",
+    "@definejs/directory": "^2.0.3",
+    "@definejs/file": "^2.0.1",
+    "@definejs/md5": "^2.0.0",
+    "@webpart/console": "^2.1.1",
+    "@webpart/master": "^2.2.2",
+    "@webpart/stat": "^1.0.9",
     "body-parser": "^1.19.0",
     "gaze": "^1.1.3",
     "iconv-lite": "^0.6.3",
