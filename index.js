@@ -1,12 +1,11 @@
 
 const SSEExpress = require('sse-express');
 
-const Router = require('./lib/Router');
-const BodyParser = require('./modules/BodyParser');
-const Path = require('./modules/Path');
-const FileList = require('./modules/FileList');
-const Stat = require('./modules/Stat');
-const MD5 = require('./modules/MD5');
+
+const App = require('./modules/App');
+const Crypto = require('./modules/Crypto');
+
+const Info = require('./modules/Info');
 const Terminal = require('./modules/Terminal');
 const Log = require('./modules/Log');
 const Server = require('./modules/Server');
@@ -15,11 +14,12 @@ const HtmlTree = require('./modules/HtmlTree');
 const Less = require('./modules/Less');
 const JS = require('./modules/JS');
 
+const ModuleSystem = require('./modules/ModuleSystem');
+const FileSystem = require('./modules/FileSystem');
+
 
 
 module.exports = {
-
-
     /**
     * 启动 API 接口服务。
     * @param {app} app 
@@ -31,7 +31,7 @@ module.exports = {
     *       sse: '/api/sse',
     *       allowCrossOrigin: true,
     *       allowHosts: ['localhost', '127.0.0.1',],
-    *       statics: [],
+    *       statics: ['/', '/htdocs', '/build'],
     *       qrcode: {},
     *       session: {},
     *       stat: {},
@@ -39,86 +39,100 @@ module.exports = {
     *   };
     */
     start(app, opt) {
-        let { port, stat, allowCrossOrigin, allowHosts = [], } = opt;
-        let info = Path.get(opt);
+        let {
+            host,
+            port,
+            api,
+            sse,
+            allowCrossOrigin,
+            allowHosts = [],
+            stat,
+            master,
 
-        if (allowCrossOrigin) {
-            app.use(function (req, res, next) {
-                res.set({ 'Access-Control-Allow-Origin': '*', });
-                next();
-            });
-        }
-
-        if (allowHosts.length > 0) {
-            app.use(function (req, res, next) {
-                let { host, } = req.headers;
-                let isOK = allowHosts.some((item) => {
-                    return `${item}:${port}` == host;
-                });
-
-                if (isOK) {
-                    next();
-                }
-                else {
-                    res.status(403).send('禁止访问');
-                }
-            });
-        }
+            watch,
+            statics,
+            qrcode,
+            session,
+        } = opt;
 
 
-        BodyParser.use(app);
+        let { dir, } = stat;
+        let info = Info.parse({ api, sse, host, port, });
+
+        App.init(app, { allowCrossOrigin, allowHosts, });
 
 
-        Stat.data = stat;
+        App.bind(app, info.api, {
+            'Server': {
+                module: Server,
+                defaults: { host, port, statics, qrcode, session, allowCrossOrigin, allowHosts, info, },
+                get: ['get',],
+            },
 
-        HtmlTree.data = {
-            'master': opt.master,
-        };
+            'Project': {
+                module: Project,
+                defaults: { watch, },
+                get: ['get',],
+            },
 
-        Server.data = { opt, info, };
-        Project.data = { opt, };
+            'FileSystem': {
+                module: FileSystem,
+                defaults: { dir, },
+                get: ['list'],
+                post: ['read', 'delete',],
+            },
 
-        FileList.data = {
-            'root': stat.htdocs,
-            'url': info.url,
-        };
+            'ModuleSystem': {
+                module: ModuleSystem,
+                defaults: { stat, },
+                get: ['parse',],
+            },
 
-        MD5.data = {
-            'root': stat.htdocs,
-        };
+            'HtmlTree': {
+                module: HtmlTree,
+                defaults: { master, },
+                get: ['parse',],
+            },
 
-        Less.data = {};
-        JS.data = {};
+            'Log': {
+                module: Log,
+                get: ['stat', 'get', 'clear',],
+            },
 
+            'Crypto': {
+                module: Crypto,
+                post: ['md5',],
+            },
 
-        bindRouter('Server', ['get']);
-        bindRouter('Project', ['get']);
-        bindRouter('FileList', ['get', 'read'], ['delete', 'write']);
-        bindRouter('Stat', ['get']);
-        bindRouter('MD5', ['get']);
-        bindRouter('Log', ['get', 'clear']);
-        bindRouter('HtmlTree', ['parse']);
-        bindRouter('Less', [], ['compile']);
-        bindRouter('JS', [], ['minify']);
-        bindRouter('Crypto', [], ['md5',]);
+            'Less': {
+                module: Less,
+                defaults: { dir, },
+                post: ['compile',],
+            },
 
-        app.get(`${info.sse}/Terminal.exec`, SSEExpress(), function (req, res, next) {
-            Terminal.exec(req, res);
+            'JS': {
+                module: JS,
+                post: ['minify',],
+            },
         });
 
-        app.get(`${info.sse}/Log.watch`, SSEExpress(), function (req, res, next) {
-            Log.watch(req, res);
+
+        App.bind(app, info.sse, {
+            'Terminal': {
+                module: Terminal,
+                plugin: SSEExpress(),
+                get: ['exec',],
+            },
+            'Log': {
+                module: Log,
+                plugin: SSEExpress(),
+                get: ['watch',],
+            },
         });
 
 
-        function bindRouter(module, gets, posts) {
-            Router.use(app, {
-                'module': module,
-                'base': `${info.api}/${module}.`,
-                'get': gets,
-                'post': posts,
-            });
-        }
+
+
 
         return info;
 

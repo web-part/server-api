@@ -5,9 +5,7 @@ const Less = master.require('Less');
 
 
 
-module.exports = exports = {
-    data: null,
-
+module.exports = {
     /**
     *   body.data = {
     *       file: '',           //要编译的 less 文件。
@@ -16,27 +14,25 @@ module.exports = exports = {
     *       dest: '',           //
     *   };
     */
-    compile: function (req, res) {
-        let data = req.body.data;
-        let { file, content, minify, dest, } = data;
+    compile(req, res, defaults) {
+        let { dir, } = defaults;
+        let { file, content, minify, dest, } = req.body.data;
+
        
-        try {
-            Less.compile({
-                'src': file,
-                'content': content,
-                'minify': minify,
-                'dest': dest,
-                'done': function (css, md5) {
-                    res.success({
-                        css,
-                        md5,
-                    });
-                },
-            });
-        }
-        catch (ex) {
-            res.error(ex);
-        }
+        Less.compile({
+            'src': `${dir}/${file}`,
+            'content': content,
+            'minify': minify,
+            'dest': `${dir}/${dest}`,
+            'done': function (css, md5) {
+                res.success({
+                    css,
+                    md5,
+                });
+            },
+        });
+
+
     },
 
 

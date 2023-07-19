@@ -5,34 +5,28 @@ const Js = master.require('Js');
 
 
 
-module.exports = exports = {
-    data: null,
+module.exports = {
 
     /**
     *   body.data = {
     *       content: '',        //
     *   };
     */
-    minify: function (req, res) {
-        let data = req.body.data;
-        let { content, } = data;
+    minify(req, res) {
+        let { content, } = req.body.data;
        
-        try {
-            Js.minify({
-                'content': content,
-                'done': function (js) {
-                    let md5 = MD5.get(js);
-                    
-                    res.success({
-                        js,
-                        md5,
-                    });
-                },
-            });
-        }
-        catch (ex) {
-            res.error(ex);
-        }
+        Js.minify({
+            'content': content,
+
+            'done': function (js) {
+                let md5 = MD5.get(js);
+
+                res.success({
+                    js,
+                    md5,
+                });
+            },
+        });
     },
 
 

@@ -14,38 +14,31 @@ function checkRunning(pid) {
 
 module.exports = exports = {
 
-    data: null,
-
     /**
     * 获取静态目录列表。
     */
-    get: function (req, res) {
-        try {
-            let { opt, } = exports.data;
-            let { file, } = opt.watch || {};
-            let cwd = process.cwd();
-            let pkg = File.readJSON(`${cwd}/package.json`);
+    get: function (req, res, defaults) {
+        let { watch, } = defaults;
+        let { file, } = watch || {};
+        let cwd = process.cwd();
+        let pkg = File.readJSON(`${cwd}/package.json`);
 
-            let processInfo = null;
+        let processInfo = null;
 
-            if (file && File.exists(file)) {
-                let json = File.readJSON(file);
-                processInfo = json.process;
-            }
-          
-            //有 processInfo，也不一定说明正在运行。
-            //可能是上次运行完后留下的信息，因此还需要检测一下。
-            let isRunning = processInfo ? checkRunning(processInfo.pid) : false;
-
-            res.success({
-                'cwd': cwd,
-                'process': isRunning ? processInfo : null,
-                'package': pkg,
-            });
+        if (file && File.exists(file)) {
+            let json = File.readJSON(file);
+            processInfo = json.process;
         }
-        catch (ex) {
-            res.error(ex);
-        }
+
+        //有 processInfo，也不一定说明正在运行。
+        //可能是上次运行完后留下的信息，因此还需要检测一下。
+        let isRunning = processInfo ? checkRunning(processInfo.pid) : false;
+
+        return {
+            'cwd': cwd,
+            'process': isRunning ? processInfo : null,
+            'package': pkg,
+        };
     },
 
 

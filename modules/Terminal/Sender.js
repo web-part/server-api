@@ -11,8 +11,8 @@ class Sender {
         let list = new List();
 
         let meta = {
-            'res': res,
-            'list': list,
+            res,
+            list,
         };
 
         mapper.set(this, meta);

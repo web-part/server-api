@@ -1,4 +1,5 @@
 
+
 const BodyParser = require('body-parser');
 
 let defaults = {
@@ -13,10 +14,13 @@ let defaults = {
 };
 
 
+
 module.exports = {
 
-    use(app) {
-        app.use(BodyParser.json(defaults.json));
-        app.use(BodyParser.urlencoded(defaults.urlencoded));
+    init(app) { 
+        let { json, urlencoded, } = defaults;
+        
+        app.use(BodyParser.json(json));
+        app.use(BodyParser.urlencoded(urlencoded));
     },
 };

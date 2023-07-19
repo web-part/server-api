@@ -26,23 +26,15 @@ function parse(config, usePack) {
     
 }
 
-module.exports = exports = {
-    data: null,
-
+module.exports = {
     /**
     * 
-    * GET 请求。
     */
-    parse: function (req, res) {
-        try {
-            let usePack = req.query.usePack == 'true';
-            let json = parse(exports.data, usePack);
+    parse(req, res, defaults) {
+        let usePack = req.query.usePack == 'true';
+        let json = parse(defaults, usePack);
 
-            res.success(json);
-        }
-        catch (ex) {
-            res.error(ex);
-        }
+        return json;
     },
 
 

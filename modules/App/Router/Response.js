@@ -1,33 +1,31 @@
 ﻿
-/**
-* 增强型的 response，提供一些命名的方法。
-*/
 
 const console = require('@webpart/console');
 
-function Response(res) {
-    this.res = res;
-}
-
-
-//实例方法。
-Response.prototype = {
-
-    constructor: Response,
+/**
+* 增强型的 response，提供一些命名的方法。
+*/
+class Response {
+    constructor(res) {
+        this.res = res;
+    }
 
     /**
     * 
     */
-    send: function (json) {
+    send(json) {
         this.res.send(json);
-    },
+    }
+
+    sse(json) {
+        this.res.sse(json);
+    }
 
     /**
-    * 已重载 success(msg, data);
     * 已重载 success(data);
+    * 已重载 success(msg, data);
     */
-    success: function (msg, data) {
-
+    success(msg, data) {
         //重载 success(data);
         if (typeof msg != 'string') {
             data = msg;
@@ -39,23 +37,23 @@ Response.prototype = {
             'msg': msg,
             'data': data || {},
         });
-    },
+    }
 
     /**
     * 
     */
-    empty: function (key) {
+    empty(key) {
         this.res.send({
             code: 201,
-            msg: '字段 ' + key + ' 不能为空。',
+            msg: `字段 ${key} 不能为空。`,
         });
-    },
+    }
 
     /**
-    * 已重载 none(msg, item);
     * 已重载 none(item);
+    * 已重载 none(msg, item);
     */
-    none: function (msg, item) {
+    none(msg, item) {
         //重载 none(item);
         if (typeof msg != 'string') {
             item = msg;
@@ -68,13 +66,16 @@ Response.prototype = {
             'data': item,
         });
 
-    },
+    }
 
     /**
     * 
     */
-    error: function (ex) {
-
+    error(ex) {
+        if (typeof ex == 'string') {
+            ex = new Error(ex);
+        }
+        
         this.res.send({
             'code': 500,
             'msg': ex.message,
@@ -82,11 +83,12 @@ Response.prototype = {
         });
 
         console.log(ex);
-    },
-};
+    }
+
+    
+
+
+}
 
 
 module.exports = Response;
-
-
-

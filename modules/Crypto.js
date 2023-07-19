@@ -1,27 +1,17 @@
 ﻿
 const MD5 = require('@definejs/md5');
 
-module.exports = exports = {
+module.exports = {
 
     /**
     * 获取。
     */
-    md5: function (req, res) {
-        try {
+    md5(req, res) {
+        let { content, } = req.body.data;
+        let md5 = MD5.get(content);
 
-            let data = req.body.data;
-            let { content, } = data;
-            let md5 = MD5.get(content);
+        return { md5, };
 
-
-            res.success({
-                'content': content,
-                'md5': md5,
-            });
-        }
-        catch (ex) {
-            res.error(ex);
-        }
     },
 
 

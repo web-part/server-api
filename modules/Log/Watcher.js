@@ -7,8 +7,8 @@ const Compare = require('./Watcher/Compare');
 
 let meta = {
     watcher: null,      //监控器实例。
-    list: [],           //用来存放最新一次的日志列表。
     clients: new Map(), //用来存放客户端的请求。
+    list: [],           //用来存放最新一次的日志列表。
 };
 
 
@@ -21,21 +21,22 @@ let defaults = {
     * 如果设置得太小而文件数过多，则 CPU 占用很高。 
     * 比如设为 100 时， 2000 多个文件可高达 60%。
     */
-    interval: 100,
+    interval: 200,
 };
 
 
 module.exports = {
 
-    watch(req, res, fn) {
-        let { file, } = console;
+    watch(req, fn) {
+        let { dir, } = console.defaults;
 
-        if (!file) {
+        if (!dir) {
             return;
         }
 
+
         //添加到客户端列表。
-        meta.clients.set(req, { res, fn, });
+        meta.clients.set(req, fn);
 
         //客户端关闭时，需要从列表中移除。
         req.on('close', function () {
@@ -49,27 +50,32 @@ module.exports = {
         }
 
 
-
-        meta.list = console.read();
+        let file = `${dir}/stat.json`;
+        let stat = console.stat();
+   
+        meta.list = console.read(stat.latest) || [];
         meta.watcher = new Gaze(file, defaults);
 
-        meta.watcher.on('changed', function (file) {
-            let oldList = meta.list || [];
-            let newList = console.read() || [];
-            let items = Compare.parse(oldList, newList);
+        meta.watcher.on('changed', function () {
+            let olds = meta.list || [];
 
-            meta.list = newList;
+            let stat = console.stat();
+            let news = meta.list = console.read(stat.latest) || [];
+
+            let items = Compare.parse(olds, news);
+
 
             if (!items) {
                 return;
             }
 
             let type = items === true ? 'reset' : 'add';
-            let list = items === true ? newList : items;
+            let list = items === true ? news : items;
 
-            meta.clients.forEach(({ res, fn }, req) => {
-                fn(res, type, list);
+            meta.clients.forEach((fn, req) => {
+                fn(type, list);
             });
+          
 
 
         });

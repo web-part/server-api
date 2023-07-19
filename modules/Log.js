@@ -1,5 +1,4 @@
 ﻿
-
 const console = require('@webpart/console');
 const Watcher = require('./Log/Watcher');
 
@@ -7,40 +6,37 @@ const Watcher = require('./Log/Watcher');
 
 module.exports = {
 
+    stat(req, res) {
+        let stat = console.stat();
+        return stat;
+    },
 
     /**
     * 获取全部列表。
     */
-    get: function (req, res) {
-        try {
-            let list = console.read();
+    get(req, res) {
+        let { date, } = req.query;
+        let list = console.read(date);
 
-            res.success(list);
-        }
-        catch (ex) {
-            res.error(ex);
-        }
+        return list;
+    },
+
+    
+    /**
+    *
+    */
+    clear(req, res) {
+        console.clear();
+        let stat = console.stat();
+        return stat;
     },
 
     /**
     *
     */
-    clear: function (req, res) {
-        try {
-            console.write('');
-            res.success([]);
-        }
-        catch (ex) {
-            res.error(ex);
-        }
-    },
+    watch(req, res) {
 
-    /**
-    *
-    */
-    watch: function (req, res) {
-
-        Watcher.watch(req, res, function (res, type, list) {
+        Watcher.watch(req, function (type, list) {
             
             try {
                 //避免换行。 因为换行在 sse 的格式里有特殊含义。

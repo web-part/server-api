@@ -17,7 +17,7 @@ function format(path) {
 
 module.exports = {
 
-    get({ api, sse, host, port, }) {
+    parse({ api, sse, host, port, }) {
         host = host || 'localhost';
 
         api = format(api);
